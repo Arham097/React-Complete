@@ -17,13 +17,12 @@ function App() {
       setFoodItems(newFoods);
       event.target.value = "";
     }
-    let onClick = () => {};
   };
   return (
     <>
       <Container>
         <h1 className="kg-heading">Food Items</h1>
-        <FoodInput handleKeyDown={onKeyDown} buyOnClick={onClick}></FoodInput>
+        <FoodInput handleKeyDown={onKeyDown}></FoodInput>
         <ErrorMessage items={foodItems}></ErrorMessage>
         <FoodItems items={foodItems}></FoodItems>
       </Container>

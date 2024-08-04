@@ -1,3 +1,5 @@
+import { MdOutlineAddCircle } from "react-icons/md";
+
 function AddTodo() {
   return (
     <center>
@@ -10,7 +12,7 @@ function AddTodo() {
         </div>
         <div class="col-2">
           <button type="button" class="btn btn-success row-button">
-            Add
+            <MdOutlineAddCircle />
           </button>
         </div>
       </div>
