@@ -1,6 +1,9 @@
+import { useContext } from "react";
 import TodoItem from "./TodoItem";
+import { TodoItemsContext } from "../store/todo-items-store";
 
-let TodoItems = ({ todoItems }) => {
+let TodoItems = () => {
+  const { todoItems } = useContext(TodoItemsContext);
   return (
     <div className="text">
       {todoItems.map((item, index) => (
