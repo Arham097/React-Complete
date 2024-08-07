@@ -14,14 +14,29 @@ const CreatePost = () => {
     const userId = userIdElement.current.value;
     const postTitle = postTitleElement.current.value;
     const postBody = postBodyElement.current.value;
-    const reactions = reactionsElement.current.value;
+    const reactions = reactionsElement.current.value.split(" ");
     const tags = tagsElement.current.value.split(" ");
-    addPost(userId, postTitle, postBody, reactions, tags);
     userIdElement.current.value = "";
     postTitleElement.current.value = "";
     postBodyElement.current.value = "";
     reactionsElement.current.value = "";
     tagsElement.current.value = "";
+
+    fetch("https://dummyjson.com/posts/add", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        title: postTitle,
+        body: postBody,
+        reactions: { likes: +reactions[0], dislikes: +reactions[1] },
+        userId,
+        tags,
+      }),
+    })
+      .then((res) => res.json())
+      .then((post) => {
+        addPost(post);
+      });
   };
 
   return (
@@ -60,14 +75,14 @@ const CreatePost = () => {
           placeholder="Tell us more about it..."
         />
         <label htmlFor="reactions" className="form-label">
-          Number of Reactions
+          Number of Reactions(Likes Dislikes)
         </label>
         <input
           type="text"
           ref={reactionsElement}
           className="form-control"
           id="reactions"
-          placeholder="How many people reated in this post"
+          placeholder="Enter Reaction in a way likes dislikes by using space"
         />
         <label htmlFor="tags" className="form-label">
           Enter your Hashtags here
