@@ -11,6 +11,8 @@ const PostList = () => {
 
   useEffect(() => {
     setFetching(true);
+    // const controller = new AbortController();
+    // const signal = controller.signal;
 
     fetch("https://dummyjson.com/posts")
       .then((response) => response.json())
@@ -21,6 +23,7 @@ const PostList = () => {
 
     return () => {
       console.log("clean");
+      // controller.abort();
     };
   }, []);
 
