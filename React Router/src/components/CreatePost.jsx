@@ -1,57 +1,17 @@
-import { useContext, useRef } from "react";
-import { PostList as PostListData } from "../store/post-list-store";
-import { useNavigate } from "react-router-dom";
+import { Form, redirect } from "react-router-dom";
 
 const CreatePost = () => {
-  const { addPost } = useContext(PostListData);
-  const navigator = useNavigate();
-
-  const userIdElement = useRef();
-  const postTitleElement = useRef();
-  const postBodyElement = useRef();
-  const reactionsElement = useRef();
-  const tagsElement = useRef();
-
-  const handleOnSubmit = (event) => {
-    event.preventDefault();
-    const userId = userIdElement.current.value;
-    const postTitle = postTitleElement.current.value;
-    const postBody = postBodyElement.current.value;
-    const reactions = reactionsElement.current.value.split(" ");
-    const tags = tagsElement.current.value.split(" ");
-    userIdElement.current.value = "";
-    postTitleElement.current.value = "";
-    postBodyElement.current.value = "";
-    reactionsElement.current.value = "";
-    tagsElement.current.value = "";
-
-    fetch("https://dummyjson.com/posts/add", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        title: postTitle,
-        body: postBody,
-        reactions: { likes: +reactions[0], dislikes: +reactions[1] },
-        userId,
-        tags,
-      }),
-    })
-      .then((res) => res.json())
-      .then((post) => {
-        addPost(post);
-        navigator("/");
-      });
-  };
+  // const { addPost } = useContext(PostList);
 
   return (
-    <form className="create-post" onSubmit={handleOnSubmit}>
+    <Form method="POST" className="create-post">
       <div className="mb-3">
         <label htmlFor="userId" className="form-label">
           User ID
         </label>
         <input
           type="text"
-          ref={userIdElement}
+          name="userId"
           className="form-control"
           id="userId"
           placeholder="Enter User Id"
@@ -61,7 +21,7 @@ const CreatePost = () => {
         </label>
         <input
           type="text"
-          ref={postTitleElement}
+          name="title"
           className="form-control"
           id="title"
           placeholder="How are you feeling today..."
@@ -73,7 +33,7 @@ const CreatePost = () => {
           type="body"
           rows={5}
           cols={30}
-          ref={postBodyElement}
+          name="body"
           className="form-control"
           id="userId"
           placeholder="Tell us more about it..."
@@ -83,7 +43,7 @@ const CreatePost = () => {
         </label>
         <input
           type="text"
-          ref={reactionsElement}
+          name="reactions"
           className="form-control"
           id="reactions"
           placeholder="Enter Reaction in a way likes dislikes by using space"
@@ -93,7 +53,7 @@ const CreatePost = () => {
         </label>
         <input
           type="text"
-          ref={tagsElement}
+          name="tags"
           className="form-control"
           id="userId"
           placeholder="Please Enter tags by using space"
@@ -103,7 +63,30 @@ const CreatePost = () => {
       <button type="submit" className="btn btn-primary">
         Post
       </button>
-    </form>
+    </Form>
   );
 };
+
+export const createPostAction = async (data) => {
+  const formData = await data.request.formData();
+  const postData = Object.fromEntries(formData);
+  postData.tags = postData.tags.split(" ");
+  postData.reactions = postData.reactions.split(" ");
+  postData.reactions = {
+    likes: +postData.reactions[0],
+    dislikes: +postData.reactions[1],
+  };
+  fetch("https://dummyjson.com/posts/add", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(postData),
+  })
+    .then((res) => res.json())
+    .then((post) => {
+      // addPost(post);
+      // console.log(post);
+    });
+  return redirect("/");
+};
+
 export default CreatePost;

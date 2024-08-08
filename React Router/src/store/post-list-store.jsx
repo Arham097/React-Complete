@@ -3,7 +3,6 @@ import { useState, useEffect, createContext, useReducer } from "react";
 export const PostList = createContext({
   postList: [],
   addPost: () => {},
-  fetching: false,
   deletePost: () => {},
 });
 
@@ -23,7 +22,6 @@ const postListReducer = (currPostList, action) => {
 
 const PostListProvider = ({ children }) => {
   const [postList, dispatchPostList] = useReducer(postListReducer, []);
-  const [fetching, setFetching] = useState(false);
 
   const addInitialPosts = (posts) => {
     dispatchPostList({
@@ -33,20 +31,6 @@ const PostListProvider = ({ children }) => {
       },
     });
   };
-
-  useEffect(() => {
-    setFetching(true);
-    fetch("https://dummyjson.com/posts")
-      .then((response) => response.json())
-      .then((data) => {
-        addInitialPosts(data.posts);
-        setFetching(false);
-      });
-
-    return () => {
-      console.log("clean");
-    };
-  }, []);
 
   const addPost = (post) => {
     // console.log(userId, postTitle, postBody, reactions, tags);
@@ -69,7 +53,6 @@ const PostListProvider = ({ children }) => {
       value={{
         postList,
         addPost,
-        fetching,
         deletePost,
       }}
     >
