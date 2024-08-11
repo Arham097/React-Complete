@@ -9,21 +9,15 @@ const FetchItems = () => {
 
   useEffect(() => {
     if (fetchStatus.fetchDone) return;
-
     dispatch(fetchStatusActions.markFetchingStarted());
     fetch("http://localhost:8080/items")
       .then((res) => res.json())
       .then(({ items }) => {
-        dispatch(itemsActions.addInitialItems(items));
         dispatch(fetchStatusActions.markFetchDone());
+        dispatch(itemsActions.addInitialItems(items));
         dispatch(fetchStatusActions.markFetchingDone());
       });
   }, [fetchStatus]);
-  return (
-    <div>
-      Fetch Done {fetchStatus.fetchDone}, Fetching{" "}
-      {fetchStatus.currentlyFetching}
-    </div>
-  );
+  return <></>;
 };
 export default FetchItems;
