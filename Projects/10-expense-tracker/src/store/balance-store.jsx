@@ -46,28 +46,40 @@ const BalanceContextProvider = ({ children }) => {
   };
   const handleBalance = (amount, income, expense) => {
     if (income) {
-      let newIncome = totalIncome + Number(amount);
-      setTotalIncome(newIncome);
+      setTotalIncome((prevIncome) => prevIncome + Number(amount));
       dispatchBalance({ type: "ADD", payload: amount });
+      return true;
     } else if (expense) {
-      let newExpense = totalExpense + Number(amount);
-      setTotalExpense(newExpense);
-      dispatchBalance({ type: "SUBTRACT", payload: amount });
+      if (balance >= amount) {
+        setTotalExpense((prevExpense) => prevExpense + Number(amount));
+        dispatchBalance({ type: "SUBTRACT", payload: amount });
+        return true;
+      } else {
+        alert(
+          `You don't have enough balance to make this transaction. You need at least Rs. ${Math.abs(
+            amount - balance
+          )} more balance to make this transaction.`
+        );
+        return false;
+      }
     }
+    return false;
   };
 
   const AddTransactionItem = (amount, description, expense, income) => {
-    handleBalance(amount, income, expense);
-    const newItemAction = {
-      type: "ADD_ITEM",
-      payload: {
-        amount,
-        description,
-        income: income ? true : false,
-        expense: expense ? true : false,
-      },
-    };
-    dispatchTransactionList(newItemAction);
+    const success = handleBalance(amount, income, expense);
+    if (success) {
+      const newItemAction = {
+        type: "ADD_ITEM",
+        payload: {
+          amount,
+          description,
+          income: income ? true : false,
+          expense: expense ? true : false,
+        },
+      };
+      dispatchTransactionList(newItemAction);
+    }
   };
   return (
     <BalanceContext.Provider
